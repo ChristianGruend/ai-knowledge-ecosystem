@@ -45,7 +45,7 @@ ai-knowledge-ecosystem/
 
 ### 1. Setup
 ```bash
-git clone https://github.com/DEIN_USERNAME/ai-knowledge-ecosystem
+git clone https://github.com/ChristianGruend/ai-knowledge-ecosystem
 cd ai-knowledge-ecosystem
 pip install -r requirements.txt
 ```
