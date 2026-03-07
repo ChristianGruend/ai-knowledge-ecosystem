@@ -1,0 +1,30 @@
+# Rohdaten von AI-Exporten – niemals committen!
+exports/
+!exports/.gitkeep
+
+# Persönliche Wissensdatenbank – bleibt lokal
+knowledge-base/
+!knowledge-base/.gitkeep
+
+# Generierte AI-Prompts (enthalten persönliche Daten)
+prompts/
+!prompts/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+.venv/
+
+# Konfiguration mit Secrets
+config.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

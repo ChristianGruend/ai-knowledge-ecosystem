@@ -1,0 +1,22 @@
+{
+  "exports": {
+    "claude":   "exports/claude_memory.json",
+    "chatgpt":  "exports/chatgpt_memory.json",
+    "gemini":   "exports/gemini_takeout.html"
+  },
+  "output_dir": "knowledge-base",
+  "prompts_dir": "prompts",
+  "deduplicate": true,
+  "max_prompt_chars": {
+    "claude":   200000,
+    "chatgpt":  8000,
+    "gemini":   50000
+  },
+  "exclude_keywords": [],
+  "categories": {
+    "personal":  ["ich", "mein", "meine", "name", "wohne", "alter", "hobby"],
+    "technical": ["code", "api", "python", "software", "dev", "git", "server"],
+    "business":  ["projekt", "kunde", "firma", "business", "auftrag", "meeting"],
+    "creative":  ["design", "art", "musik", "schreiben", "video", "foto"]
+  }
+}
