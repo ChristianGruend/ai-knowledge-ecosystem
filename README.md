@@ -1,6 +1,14 @@
-# 🧠 AI Knowledge Ecosystem
+# AI Knowledge Ecosystem
 
-Zentrale Wissensdatenbank für alle KI-Systeme (Claude, ChatGPT, Gemini, u.a.)
+Zentrale Wissensdatenbank fuer alle KI-Systeme (Claude, ChatGPT, Gemini, u.a.)
+
+## Worum geht es?
+
+Wenn du mit mehreren KIs arbeitest, kennt jede nur das, was du ihr erzaehlt hast. Dieses Projekt aendert das:
+
+Du exportierst deine Chatverlaeufe aus Claude, ChatGPT und Gemini. Eine automatische Pipeline liest diese Daten, extrahiert dein Wissen daraus, entfernt Duplikate und sortiert alles in Kategorien. Daraus entstehen fertige System-Prompts, die du in jede KI einfuegen kannst.
+
+**Das Ergebnis:** Alle deine KIs kennen dich – deine Projekte, Vorlieben, dein technisches Wissen. Egal welche KI du oeffnest, sie weiss schon Bescheid.
 
 ## Struktur
 
@@ -62,13 +70,17 @@ python scripts/pipeline.py
 
 ## GitHub Actions
 
-Der Workflow `.github/workflows/sync.yml` führt die Pipeline täglich um 03:00 UTC aus.
+Der Workflow `.github/workflows/sync.yml` führt die Pipeline täglich automatisch aus.
 
 Benötigte Secrets (in Repo-Einstellungen unter *Settings → Secrets*):
 - `ANTHROPIC_API_KEY` – für KI-Deduplizierung (optional)
 
 ## Datenschutz
 
-- `exports/` ist in `.gitignore` – Rohdaten bleiben lokal
-- Nur normalisierte, bereinigte `.md`-Dateien werden gepusht
-- Sensible Inhalte können via `config.json` ausgeschlossen werden
+Dieses Repo enthaelt **keine persoenlichen Daten**. Alle privaten Inhalte bleiben lokal auf deinem Rechner:
+
+- `exports/` – deine exportierten Chatverlaeufe (lokal, in `.gitignore`)
+- `knowledge-base/` – dein aufbereitetes Wissen (lokal, in `.gitignore`)
+- `prompts/` – die generierten System-Prompts (lokal, in `.gitignore`)
+
+Auf GitHub landen nur die Scripts, die Config und diese README.
