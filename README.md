@@ -1,6 +1,6 @@
 # AI Knowledge Ecosystem
 
-Zentrale Wissensdatenbank fuer alle KI-Systeme (Claude, ChatGPT, Gemini, u.a.)
+Zentrale Wissensdatenbank fuer alle KI-Systeme (Claude, ChatGPT, Gemini, Mistral u.a.)
 
 ## Worum geht es?
 
@@ -10,27 +10,72 @@ Du exportierst deine Chatverlaeufe aus Claude, ChatGPT, Gemini und Mistral. Eine
 
 **Das Ergebnis:** Alle deine KIs kennen dich – deine Projekte, Vorlieben, dein technisches Wissen. Egal welche KI du oeffnest, sie weiss schon Bescheid.
 
+## Schnellstart
+
+Dieses Repo ist ein **Template**. Klicke oben auf **"Use this template"** und erstelle dir eine **private Kopie**. In deiner privaten Kopie kannst du dann deine Daten sicher speichern.
+
+### 1. Private Kopie erstellen
+
+Oben rechts auf **"Use this template" > "Create a new repository"** klicken. Dann:
+- Repository name: z.B. `ai-knowledge-data`
+- Visibility: **Private**
+- "Create repository" klicken
+
+Danach lokal klonen:
+
+```bash
+git clone https://github.com/DEIN_USERNAME/ai-knowledge-data
+cd ai-knowledge-data
+pip install -r requirements.txt
+```
+
+In deiner privaten Kopie die `.gitignore` anpassen: Die Zeilen fuer `knowledge-base/` und `prompts/` entfernen, damit dein Wissen im privaten Repo gespeichert wird.
+
+### 2. Exports herunterladen
+
+| KI | Wo exportieren? |
+| --- | --- |
+| Claude | claude.ai > Einstellungen > Daten exportieren |
+| ChatGPT | chatgpt.com > Einstellungen > Daten exportieren |
+| Gemini | takeout.google.com > Gemini Apps |
+| Mistral | chat.mistral.ai > Einstellungen > Daten exportieren |
+
+Dateien ablegen in `exports/` (wird nicht gepusht – steht in `.gitignore`)
+
+### 3. Pipeline ausfuehren
+
+```bash
+python scripts/pipeline.py
+```
+
+### 4. Prompts in KIs einspeisen
+
+- **Claude:** `prompts/claude_project.md` > claude.ai > Projects > Project Instructions
+- **ChatGPT:** `prompts/chatgpt_custom_gpt.md` > Custom GPT > Instructions
+- **Gemini:** `prompts/gemini_gem.md` > Gems > Instructions
+- **Mistral:** `prompts/mistral_agent.md` > chat.mistral.ai > Agents > Instructions
+
 ## Struktur
 
-```
+```text
 ai-knowledge-ecosystem/
-├── 📁 knowledge-base/        # Deine .md-Wissensdatenbank
-│   ├── personal/             # Persönliches Profil, Präferenzen
-│   ├── projects/             # Projekte & Aufgaben
-│   ├── technical/            # Technisches Wissen
-│   ├── business/             # Business-Kontext
-│   └── general/              # Allgemeines
+├── knowledge-base/          # Deine Wissensdatenbank
+│   ├── personal/            # Persoenliches Profil
+│   ├── projects/            # Projekte & Aufgaben
+│   ├── technical/           # Technisches Wissen
+│   ├── business/            # Business-Kontext
+│   ├── creative/            # Kreatives
+│   └── general/             # Allgemeines
 │
-├── 📁 exports/               # Rohdaten von den AIs (nicht committen!)
-│   └── .gitkeep
+├── exports/                 # Rohdaten von den KIs (nicht committen!)
 │
-├── 📁 prompts/               # Generierte System-Prompts je AI
+├── prompts/                 # Generierte System-Prompts je KI
 │   ├── claude_project.md
 │   ├── chatgpt_custom_gpt.md
 │   ├── gemini_gem.md
 │   └── mistral_agent.md
 │
-├── 📁 scripts/               # Python-Pipeline
+├── scripts/                 # Python-Pipeline
 │   ├── extractors.py
 │   ├── normalize.py
 │   ├── deduplicate.py
@@ -38,52 +83,19 @@ ai-knowledge-ecosystem/
 │   └── pipeline.py
 │
 └── .github/workflows/
-    └── sync.yml              # Täglicher Auto-Sync via GitHub Actions
+    └── sync.yml             # Automatischer Sync via GitHub Actions
 ```
-
-## Schnellstart
-
-### 1. Setup
-```bash
-git clone https://github.com/ChristianGruend/ai-knowledge-ecosystem
-cd ai-knowledge-ecosystem
-pip install -r requirements.txt
-```
-
-### 2. Exports herunterladen
-| AI | Export-Pfad |
-|----|------------|
-| Claude | claude.ai → Einstellungen → Daten exportieren |
-| ChatGPT | chatgpt.com → Einstellungen → Daten exportieren |
-| Gemini | takeout.google.com → Gemini Apps |
-| Mistral | chat.mistral.ai → Einstellungen → Daten exportieren |
-
-Dateien ablegen in `exports/` (wird nicht zu GitHub gepusht – steht in `.gitignore`)
-
-### 3. Pipeline ausführen
-```bash
-python scripts/pipeline.py
-```
-
-### 4. Prompts in AIs einspeisen
-- **Claude:** `prompts/claude_project.md` → claude.ai → Projects → Project Instructions
-- **ChatGPT:** `prompts/chatgpt_custom_gpt.md` → Custom GPT → Instructions
-- **Gemini:** `prompts/gemini_gem.md` → Gems → Instructions
-- **Mistral:** `prompts/mistral_agent.md` → chat.mistral.ai → Agents → Instructions
 
 ## GitHub Actions
 
-Der Workflow `.github/workflows/sync.yml` führt die Pipeline täglich automatisch aus.
+Der Workflow `.github/workflows/sync.yml` fuehrt die Pipeline automatisch aus.
 
-Benötigte Secrets (in Repo-Einstellungen unter *Settings → Secrets*):
-- `ANTHROPIC_API_KEY` – für KI-Deduplizierung (optional)
+Benoetigte Secrets (in Repo-Einstellungen unter *Settings > Secrets*):
+
+- `ANTHROPIC_API_KEY` – fuer KI-Deduplizierung (optional)
 
 ## Datenschutz
 
-Dieses Repo enthaelt **keine persoenlichen Daten**. Alle privaten Inhalte bleiben lokal auf deinem Rechner:
+Dieses Template-Repo enthaelt **keine persoenlichen Daten**.
 
-- `exports/` – deine exportierten Chatverlaeufe (lokal, in `.gitignore`)
-- `knowledge-base/` – dein aufbereitetes Wissen (lokal, in `.gitignore`)
-- `prompts/` – die generierten System-Prompts (lokal, in `.gitignore`)
-
-Auf GitHub landen nur die Scripts, die Config und diese README.
+Fuer die Nutzung empfehlen wir eine **private Kopie** (siehe Schnellstart). In der privaten Kopie werden `knowledge-base/` und `prompts/` im Git gespeichert – sicher, weil nur du Zugriff hast. Die `exports/` (Rohdaten) bleiben immer lokal.
