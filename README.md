@@ -6,7 +6,7 @@ Zentrale Wissensdatenbank fuer alle KI-Systeme (Claude, ChatGPT, Gemini, u.a.)
 
 Wenn du mit mehreren KIs arbeitest, kennt jede nur das, was du ihr erzaehlt hast. Dieses Projekt aendert das:
 
-Du exportierst deine Chatverlaeufe aus Claude, ChatGPT und Gemini. Eine automatische Pipeline liest diese Daten, extrahiert dein Wissen daraus, entfernt Duplikate und sortiert alles in Kategorien. Daraus entstehen fertige System-Prompts, die du in jede KI einfuegen kannst.
+Du exportierst deine Chatverlaeufe aus Claude, ChatGPT, Gemini und Mistral. Eine automatische Pipeline liest diese Daten, extrahiert dein Wissen daraus, entfernt Duplikate und sortiert alles in Kategorien. Daraus entstehen fertige System-Prompts, die du in jede KI einfuegen kannst.
 
 **Das Ergebnis:** Alle deine KIs kennen dich – deine Projekte, Vorlieben, dein technisches Wissen. Egal welche KI du oeffnest, sie weiss schon Bescheid.
 
@@ -27,7 +27,8 @@ ai-knowledge-ecosystem/
 ├── 📁 prompts/               # Generierte System-Prompts je AI
 │   ├── claude_project.md
 │   ├── chatgpt_custom_gpt.md
-│   └── gemini_gem.md
+│   ├── gemini_gem.md
+│   └── mistral_agent.md
 │
 ├── 📁 scripts/               # Python-Pipeline
 │   ├── extractors.py
@@ -55,6 +56,7 @@ pip install -r requirements.txt
 | Claude | claude.ai → Einstellungen → Daten exportieren |
 | ChatGPT | chatgpt.com → Einstellungen → Daten exportieren |
 | Gemini | takeout.google.com → Gemini Apps |
+| Mistral | chat.mistral.ai → Einstellungen → Daten exportieren |
 
 Dateien ablegen in `exports/` (wird nicht zu GitHub gepusht – steht in `.gitignore`)
 
@@ -67,6 +69,7 @@ python scripts/pipeline.py
 - **Claude:** `prompts/claude_project.md` → claude.ai → Projects → Project Instructions
 - **ChatGPT:** `prompts/chatgpt_custom_gpt.md` → Custom GPT → Instructions
 - **Gemini:** `prompts/gemini_gem.md` → Gems → Instructions
+- **Mistral:** `prompts/mistral_agent.md` → chat.mistral.ai → Agents → Instructions
 
 ## GitHub Actions
 
