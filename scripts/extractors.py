@@ -106,6 +106,36 @@ def extract_gemini(export_path: str) -> list[dict]:
     return items
 
 
+def extract_mistral(export_path: str) -> list[dict]:
+    """
+    Verarbeitet Mistral-Datenexport (JSON).
+    Export: chat.mistral.ai > Einstellungen > Daten exportieren
+    """
+    path = Path(export_path)
+    if not path.exists():
+        print(f"  ⚠️  Mistral-Export nicht gefunden: {export_path}")
+        return []
+
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+
+    items = []
+
+    memory_list = data if isinstance(data, list) else data.get("memories", data.get("conversations", []))
+    for mem in memory_list:
+        content = mem.get("content") or mem.get("memory") or ""
+        if content.strip():
+            items.append({
+                "source": "mistral",
+                "type": "memory",
+                "content": content.strip(),
+                "created": mem.get("created_at", ""),
+            })
+
+    print(f"  ✅ Mistral: {len(items)} Einträge extrahiert")
+    return items
+
+
 def extract_manual(manual_dir: str = "exports/manual") -> list[dict]:
     """
     Liest manuelle .md-Einträge aus einem Ordner.

@@ -56,6 +56,10 @@ def generate_all_prompts(knowledge_dir: str, prompts_dir: str, config: dict):
     gemini_prompt = _wrap_gemini(knowledge)
     _save_prompt(prompts_dir, "gemini_gem.md", gemini_prompt, limits.get("gemini", 50000))
 
+    # --- Mistral Agent ---
+    mistral_prompt = _wrap_mistral(knowledge)
+    _save_prompt(prompts_dir, "mistral_agent.md", mistral_prompt, limits.get("mistral", 32000))
+
     print(f"  📝 Prompts gespeichert in '{prompts_dir}/'")
 
 
@@ -79,6 +83,14 @@ Always refer to this knowledge when relevant.
 def _wrap_gemini(knowledge: str) -> str:
     return f"""Du bist ein persönlicher KI-Assistent mit Zugriff auf die Wissensdatenbank des Nutzers.
 Beziehe dieses Wissen in alle relevanten Antworten ein.
+
+{knowledge}
+"""
+
+
+def _wrap_mistral(knowledge: str) -> str:
+    return f"""Du bist ein persoenlicher KI-Assistent mit Zugriff auf die Wissensdatenbank des Nutzers.
+Nutze dieses Wissen fuer praezisere und persoenlichere Antworten.
 
 {knowledge}
 """
