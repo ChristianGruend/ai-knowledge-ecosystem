@@ -1,12 +1,12 @@
 # AI Knowledge Ecosystem
 
-Zentrale Wissensdatenbank fuer alle KI-Systeme (Claude, ChatGPT, Gemini, Mistral u.a.)
+Zentrale Wissensdatenbank fuer alle KI-Systeme (Claude, ChatGPT, Gemini, Mistral, Copilot u.a.)
 
 ## Worum geht es?
 
 Wenn du mit mehreren KIs arbeitest, kennt jede nur das, was du ihr erzaehlt hast. Dieses Projekt aendert das:
 
-Du exportierst deine Chatverlaeufe aus Claude, ChatGPT, Gemini und Mistral. Eine automatische Pipeline liest diese Daten, extrahiert dein Wissen daraus, entfernt Duplikate und sortiert alles in Kategorien. Daraus entstehen fertige System-Prompts, die du in jede KI einfuegen kannst.
+Du exportierst deine Chatverlaeufe aus Claude, ChatGPT, Gemini, Mistral und Copilot. Eine automatische Pipeline liest diese Daten, extrahiert dein Wissen daraus, entfernt Duplikate und sortiert alles in Kategorien. Daraus entstehen fertige System-Prompts, die du in jede KI einfuegen kannst.
 
 **Das Ergebnis:** Alle deine KIs kennen dich – deine Projekte, Vorlieben, dein technisches Wissen. Egal welche KI du oeffnest, sie weiss schon Bescheid.
 
@@ -39,6 +39,7 @@ In deiner privaten Kopie die `.gitignore` anpassen: Die Zeilen fuer `knowledge-b
 | ChatGPT | chatgpt.com > Einstellungen > Daten exportieren |
 | Gemini | takeout.google.com > Gemini Apps |
 | Mistral | chat.mistral.ai > Einstellungen > Daten exportieren |
+| Copilot | account.microsoft.com > Datenschutz > Aktivitaetsverlauf herunterladen |
 
 Dateien ablegen in `exports/` (wird nicht gepusht – steht in `.gitignore`)
 
@@ -54,6 +55,7 @@ python scripts/pipeline.py
 - **ChatGPT:** `prompts/chatgpt_custom_gpt.md` > Custom GPT > Instructions
 - **Gemini:** `prompts/gemini_gem.md` > Gems > Instructions
 - **Mistral:** `prompts/mistral_agent.md` > chat.mistral.ai > Agents > Instructions
+- **Copilot:** `prompts/copilot_gpt.md` > copilot.microsoft.com > Copilot GPTs > Instructions
 
 ## Struktur
 
@@ -73,7 +75,8 @@ ai-knowledge-ecosystem/
 │   ├── claude_project.md
 │   ├── chatgpt_custom_gpt.md
 │   ├── gemini_gem.md
-│   └── mistral_agent.md
+│   ├── mistral_agent.md
+│   └── copilot_gpt.md
 │
 ├── scripts/                 # Python-Pipeline
 │   ├── extractors.py

@@ -60,6 +60,10 @@ def generate_all_prompts(knowledge_dir: str, prompts_dir: str, config: dict):
     mistral_prompt = _wrap_mistral(knowledge)
     _save_prompt(prompts_dir, "mistral_agent.md", mistral_prompt, limits.get("mistral", 32000))
 
+    # --- Microsoft Copilot GPT ---
+    copilot_prompt = _wrap_copilot(knowledge)
+    _save_prompt(prompts_dir, "copilot_gpt.md", copilot_prompt, limits.get("copilot", 32000))
+
     print(f"  📝 Prompts gespeichert in '{prompts_dir}/'")
 
 
@@ -91,6 +95,14 @@ Beziehe dieses Wissen in alle relevanten Antworten ein.
 def _wrap_mistral(knowledge: str) -> str:
     return f"""Du bist ein persoenlicher KI-Assistent mit Zugriff auf die Wissensdatenbank des Nutzers.
 Nutze dieses Wissen fuer praezisere und persoenlichere Antworten.
+
+{knowledge}
+"""
+
+
+def _wrap_copilot(knowledge: str) -> str:
+    return f"""You are a personal AI assistant with access to the user's knowledge base.
+Use this knowledge for more precise and personalized answers.
 
 {knowledge}
 """

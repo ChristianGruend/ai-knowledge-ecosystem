@@ -136,6 +136,36 @@ def extract_mistral(export_path: str) -> list[dict]:
     return items
 
 
+def extract_copilot(export_path: str) -> list[dict]:
+    """
+    Verarbeitet Microsoft Copilot-Datenexport (JSON).
+    Export: account.microsoft.com > Datenschutz > Aktivitaetsverlauf herunterladen
+    """
+    path = Path(export_path)
+    if not path.exists():
+        print(f"  ⚠️  Copilot-Export nicht gefunden: {export_path}")
+        return []
+
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+
+    items = []
+
+    memory_list = data if isinstance(data, list) else data.get("memories", data.get("conversations", []))
+    for mem in memory_list:
+        content = mem.get("content") or mem.get("memory") or mem.get("text") or ""
+        if content.strip():
+            items.append({
+                "source": "copilot",
+                "type": "memory",
+                "content": content.strip(),
+                "created": mem.get("created_at", mem.get("timestamp", "")),
+            })
+
+    print(f"  ✅ Copilot: {len(items)} Einträge extrahiert")
+    return items
+
+
 def extract_manual(manual_dir: str = "exports/manual") -> list[dict]:
     """
     Liest manuelle .md-Einträge aus einem Ordner.

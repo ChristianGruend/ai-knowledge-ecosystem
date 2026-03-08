@@ -10,7 +10,7 @@ from pathlib import Path
 # Scripts-Ordner in Python-Pfad
 sys.path.insert(0, str(Path(__file__).parent))
 
-from extractors import extract_claude, extract_chatgpt, extract_gemini, extract_mistral, extract_manual
+from extractors import extract_claude, extract_chatgpt, extract_gemini, extract_mistral, extract_copilot, extract_manual
 from normalize import normalize_all, save_to_disk, load_config
 from deduplicate import deduplicate
 from injectors import generate_all_prompts
@@ -31,6 +31,7 @@ def run(config_path: str = "config.json"):
     raw += extract_chatgpt(exports.get("chatgpt", ""))
     raw += extract_gemini(exports.get("gemini", ""))
     raw += extract_mistral(exports.get("mistral", ""))
+    raw += extract_copilot(exports.get("copilot", ""))
     raw += extract_manual()
 
     if not raw:
@@ -72,6 +73,7 @@ def run(config_path: str = "config.json"):
     print("  → chatgpt_custom_gpt.md in Custom GPT Instructions")
     print("  → gemini_gem.md        in Gemini Gems")
     print("  → mistral_agent.md     in Mistral Agents")
+    print("  → copilot_gpt.md       in Microsoft Copilot GPTs")
 
 
 if __name__ == "__main__":
