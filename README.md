@@ -1,13 +1,26 @@
 # AI Knowledge Ecosystem
 
-Eine zentrale Wissensdatenbank fuer alle deine KI-Systeme — Claude, ChatGPT, Gemini,
-Mistral, Copilot.
+Mein privater Versuch, ein **Second Brain** zu bauen, das alle meine KIs teilen —
+Claude, ChatGPT, Gemini, Mistral, Copilot.
+
+> **Was das hier ist und was nicht.**
+> Kein Produkt, kein Framework, kein fertiges Tool. Das ist die entkernte Fassung
+> meines eigenen Setups: ein Bastelprojekt, das ich fuer mich gebaut habe und
+> oeffentlich stelle, falls sich jemand etwas abschauen mag. Es entsteht nebenbei,
+> aendert sich, wenn ich etwas Besseres finde, und ist genau so weit fertig, wie ich
+> es selbst brauche.
+>
+> Kein Support, keine Garantie, keine Roadmap. Wenn du es nachbaust: lies den Code,
+> bevor du ihn laufen laesst — er ist auf meinen Alltag zugeschnitten, nicht auf
+> deinen. Fragen und Ideen gern als Issue, aber ohne Versprechen, dass ich reagiere.
 
 ## Worum geht es?
 
-Wenn du mit mehreren KIs arbeitest, kennt jede nur das, was du ihr gerade erzaehlt hast.
-Dieses Projekt aendert das. Es besteht aus zwei Teilen, die unabhaengig voneinander
-funktionieren:
+Wenn man mit mehreren KIs arbeitet, kennt jede nur das, was man ihr gerade erzaehlt hat.
+Dieselbe Vorgeschichte immer wieder tippen — das war der Ausloeser. Die Idee: ein
+gemeinsames Gedaechtnis an einer Stelle pflegen und in alle KIs einspeisen.
+
+Es besteht aus zwei Teilen, die unabhaengig voneinander funktionieren:
 
 **1. Die Pipeline** — du exportierst deine Chatverlaeufe aus den KIs, ein Python-Skript
 liest sie ein, extrahiert das Wissen daraus, entfernt Duplikate, sortiert alles in
@@ -18,11 +31,26 @@ der jeweiligen KI.
 bei jedem Start mitliest. Ein Symlink (`~/.claude/CLAUDE.md` → `memory/CLAUDE.md`) reicht
 dafuer aus.
 
-**Das Ergebnis:** Egal welche KI du oeffnest — sie weiss schon Bescheid.
+**Das Ergebnis, wenn es laeuft:** Egal welche KI ich oeffne — sie weiss schon Bescheid.
 
-> **Dieses Repo ist eine Blanko-Vorlage.** Es enthaelt bewusst keine persoenlichen Daten:
+> **Dieses Repo ist die Blanko-Fassung.** Es enthaelt bewusst keine persoenlichen Daten:
 > alle Dateien unter `memory/` sind Platzhalter, `knowledge-base/` und `prompts/` sind
-> leer. Deine echten Daten gehoeren in eine **private Kopie**.
+> leer. Meine echten Daten liegen in einer separaten **privaten Kopie** — und deine
+> gehoeren genauso in eine eigene.
+
+## Ehrlicher Stand
+
+| Teil | Stand |
+|---|---|
+| Memory-Module + Symlink | laeuft taeglich, der nuetzlichste Teil |
+| Pipeline (Exports → Prompts) | laeuft, aber die Kategorisierung ist simples Keyword-Matching |
+| Deduplizierung | funktioniert grob, kein Modellaufruf dahinter |
+| GitHub-Actions-Workflow | eingerichtet, in der Praxis selten gebraucht |
+| `claude-sync/` | ad hoc entstanden, um einen zweiten Rechner nachzuziehen |
+
+Ungeloest: Die Pipeline schreibt `knowledge-base/` bei jedem Lauf komplett neu — es gibt
+also keine Historie und keine Moeglichkeit, einen Eintrag von Hand zu korrigieren, ohne
+ihn nach `exports/manual/` zu verschieben.
 
 ---
 
@@ -191,8 +219,9 @@ Sinnvoll wird er erst in der privaten Kopie.
 
 ## Datenschutz
 
-Dieses Repo ist die **oeffentliche Vorlage** und enthaelt keine persoenlichen Daten.
-Beim Nachbauen drei Regeln:
+Dieses Repo ist die entkernte Fassung und enthaelt keine persoenlichen Daten — das ist
+der ganze Grund, warum es zwei Repos sind. Drei Regeln, die ich mir selbst gesetzt habe
+und die beim Nachbauen genauso gelten:
 
 1. **Die Arbeitskopie ist privat.** `memory/`, `knowledge-base/` und `prompts/` enthalten
    nach kurzer Nutzung mehr ueber dich als jedes Social-Media-Profil.
