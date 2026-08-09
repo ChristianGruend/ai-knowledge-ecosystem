@@ -1,132 +1,132 @@
 # AI Knowledge Ecosystem
 
-Mein privater Versuch, ein **Second Brain** zu bauen, das alle meine KIs teilen —
-Claude, ChatGPT, Gemini, Mistral, Copilot.
+My attempt at building a second brain that all my AIs share — Claude, ChatGPT, Gemini,
+Mistral, Copilot.
 
-> **Was das hier ist und was nicht.**
-> Kein Produkt, kein Framework, kein fertiges Tool. Das ist die entkernte Fassung
-> meines eigenen Setups: ein Bastelprojekt, das ich fuer mich gebaut habe und
-> oeffentlich stelle, falls sich jemand etwas abschauen mag. Es entsteht nebenbei,
-> aendert sich, wenn ich etwas Besseres finde, und ist genau so weit fertig, wie ich
-> es selbst brauche.
+> **What this is, and what it isn't.**
+> Not a product. Not a framework. Not a finished tool. This is my own setup with the
+> personal parts stripped out — a thing I built for myself and put here in case someone
+> wants to steal an idea from it. It grows on the side, it changes whenever I find
+> something better, and it's exactly as finished as I need it to be.
 >
-> Kein Support, keine Garantie, keine Roadmap. Wenn du es nachbaust: lies den Code,
-> bevor du ihn laufen laesst — er ist auf meinen Alltag zugeschnitten, nicht auf
-> deinen. Fragen und Ideen gern als Issue, aber ohne Versprechen, dass ich reagiere.
+> No support, no guarantees, no roadmap. If you rebuild it: read the code before you run
+> it. It's shaped around my day, not yours. Issues are welcome, but I can't promise I'll
+> get to them.
 
-## Worum geht es?
+## The problem I had
 
-Wenn man mit mehreren KIs arbeitet, kennt jede nur das, was man ihr gerade erzaehlt hat.
-Dieselbe Vorgeschichte immer wieder tippen — das war der Ausloeser. Die Idee: ein
-gemeinsames Gedaechtnis an einer Stelle pflegen und in alle KIs einspeisen.
+Every AI starts from zero. New chat, same story: who I am, what I work on, how I want to
+be talked to. Type it again. And again. On five different platforms.
 
-Es besteht aus zwei Teilen, die unabhaengig voneinander funktionieren:
+So I stopped typing it into chats and started keeping it in one place instead — then
+feeding that one place into everything.
 
-**1. Die Pipeline** — du exportierst deine Chatverlaeufe aus den KIs, ein Python-Skript
-liest sie ein, extrahiert das Wissen daraus, entfernt Duplikate, sortiert alles in
-Kategorien und erzeugt fertige System-Prompts. Die kopierst du in das Instructions-Feld
-der jeweiligen KI.
+Two parts, and they work independently:
 
-**2. Die Memory-Module** — handgepflegte Markdown-Dateien in `memory/`, die Claude Code
-bei jedem Start mitliest. Ein Symlink (`~/.claude/CLAUDE.md` → `memory/CLAUDE.md`) reicht
-dafuer aus.
+**1. The memory modules** — hand-written Markdown in `memory/`, read by Claude Code on
+every start. One symlink (`~/.claude/CLAUDE.md` → `memory/CLAUDE.md`) does the whole job.
+This is the part I actually use daily.
 
-**Das Ergebnis, wenn es laeuft:** Egal welche KI ich oeffne — sie weiss schon Bescheid.
+**2. The pipeline** — I export my chat history from the AIs, a Python script reads it,
+pulls the knowledge out, drops duplicates, sorts it into categories, and spits out
+ready-made system prompts. Those go into each platform's instructions field.
 
-> **Dieses Repo ist die Blanko-Fassung.** Es enthaelt bewusst keine persoenlichen Daten:
-> alle Dateien unter `memory/` sind Platzhalter, `knowledge-base/` und `prompts/` sind
-> leer. Meine echten Daten liegen in einer separaten **privaten Kopie** — und deine
-> gehoeren genauso in eine eigene.
+**When it works:** whichever AI I open already knows the story.
 
-## Ehrlicher Stand
+> **This repo is the hollowed-out version.** No personal data in it, on purpose:
+> everything under `memory/` is a placeholder, `knowledge-base/` and `prompts/` are
+> empty. My real data lives in a separate **private copy** — and yours belongs in one
+> of your own.
 
-| Teil | Stand |
+## Where it actually stands
+
+| Part | State |
 |---|---|
-| Memory-Module + Symlink | laeuft taeglich, der nuetzlichste Teil |
-| Pipeline (Exports → Prompts) | laeuft, aber die Kategorisierung ist simples Keyword-Matching |
-| Deduplizierung | funktioniert grob, kein Modellaufruf dahinter |
-| GitHub-Actions-Workflow | eingerichtet, in der Praxis selten gebraucht |
-| `claude-sync/` | ad hoc entstanden, um einen zweiten Rechner nachzuziehen |
+| Memory modules + symlink | runs every day, easily the most useful piece |
+| Pipeline (exports → prompts) | works, but the categorising is dumb keyword matching |
+| Deduplication | roughly fine, no model behind it |
+| GitHub Actions workflow | set up, rarely needed in practice |
+| `claude-sync/` | grew out of "I need this on the other machine too" |
 
-Ungeloest: Die Pipeline schreibt `knowledge-base/` bei jedem Lauf komplett neu — es gibt
-also keine Historie und keine Moeglichkeit, einen Eintrag von Hand zu korrigieren, ohne
-ihn nach `exports/manual/` zu verschieben.
+Still unsolved: the pipeline rewrites `knowledge-base/` from scratch on every run. So
+there's no history, and no way to fix a single entry by hand without moving it into
+`exports/manual/` first.
 
 ---
 
-## Schnellstart
+## Getting started
 
-### 1. Private Kopie erstellen
+### 1. Make a private copy
 
-Oben rechts auf **"Use this template" → "Create a new repository"**:
+Top right: **"Use this template" → "Create a new repository"**.
 
-- Repository name: z.B. `ai-knowledge-data`
-- Visibility: **Private** ← wichtig
-- "Create repository"
+- Repository name: something like `ai-knowledge-data`
+- Visibility: **Private** ← this one matters
+- Create.
 
-Danach lokal klonen:
+Then clone it:
 
 ```bash
-git clone https://github.com/DEIN_USERNAME/ai-knowledge-data
+git clone https://github.com/YOUR_USERNAME/ai-knowledge-data
 cd ai-knowledge-data
 pip install -r requirements.txt
 ```
 
-In der privaten Kopie die `.gitignore` anpassen: die Bloecke fuer `knowledge-base/` und
-`prompts/` entfernen, damit dein Wissen dort versioniert wird. Die Bloecke fuer
-`exports/` und `claude-sync/` bleiben stehen.
+In your private copy, edit `.gitignore`: drop the blocks for `knowledge-base/` and
+`prompts/` so your knowledge gets versioned there. Leave the `exports/` and
+`claude-sync/` blocks alone.
 
-### 2. Memory-Module ausfuellen
+### 2. Fill in the memory modules
 
 ```bash
-# Symlink ~/.claude/CLAUDE.md -> <repo>/memory/CLAUDE.md
+# symlinks ~/.claude/CLAUDE.md -> <repo>/memory/CLAUDE.md
 bash setup.sh          # Linux/macOS
-.\setup.ps1            # Windows (PowerShell als Admin oder Developer Mode)
+.\setup.ps1            # Windows (PowerShell as admin, or Developer Mode on)
 ```
 
-Danach die Platzhalter in `memory/` durch deine Angaben ersetzen:
+Then replace the placeholders in `memory/`:
 
-| Datei | Inhalt | Wird geladen |
+| File | Holds | Loaded |
 |---|---|---|
-| `CLAUDE.md` | Einstiegspunkt: Regeln, Modul-Uebersicht | immer (Symlink) |
-| `CORE_IDENTITY.md` | Wer du bist — kurz | immer (per `@`-Import) |
-| `CURRENT_CONTEXT.md` | Aktueller Stand, laufende Projekte | themenabhaengig |
-| `WORK_SKILLS.md` | Tech-Stack, Werdegang, Ziele | themenabhaengig |
-| `AI_COLLABORATION.md` | Langfassung der Zusammenarbeitsregeln | themenabhaengig |
+| `CLAUDE.md` | entry point: rules, module index | always (the symlink) |
+| `CORE_IDENTITY.md` | who you are — keep it short | always (via `@` import) |
+| `CURRENT_CONTEXT.md` | what's going on right now, running projects | on topic |
+| `WORK_SKILLS.md` | stack, background, goals | on topic |
+| `AI_COLLABORATION.md` | the long version of how you want to work together | on topic |
 
-Die Trennung ist der eigentliche Trick: Nur `CLAUDE.md` und die per `@` importierten
-Module kosten in **jeder** Session Kontext. Alles andere wird erst gelesen, wenn das
-Thema passt. Halte die Import-Liste deshalb kurz.
+The split is the whole trick. Only `CLAUDE.md` and whatever it `@`-imports costs context
+in **every** session. Everything else gets read when the topic comes up. So keep that
+import list short — I've bloated it twice and regretted it both times.
 
-### 3. Exports herunterladen
+### 3. Grab your exports
 
-| KI | Wo exportieren? |
+| AI | Where |
 | --- | --- |
-| Claude | claude.ai → Einstellungen → Daten exportieren |
-| ChatGPT | chatgpt.com → Einstellungen → Daten exportieren |
+| Claude | claude.ai → Settings → Export data |
+| ChatGPT | chatgpt.com → Settings → Export data |
 | Gemini | takeout.google.com → Gemini Apps |
-| Mistral | chat.mistral.ai → Einstellungen → Daten exportieren |
-| Copilot | account.microsoft.com → Datenschutz → Aktivitaetsverlauf herunterladen |
+| Mistral | chat.mistral.ai → Settings → Export data |
+| Copilot | account.microsoft.com → Privacy → Download activity history |
 
-Dateien nach `exports/` legen (gitignored). Die erwarteten Dateinamen stehen in
-`config.json` — fehlende Dateien werden uebersprungen, du brauchst also nicht alle fuenf.
+Drop the files in `exports/` (gitignored). Expected filenames are in `config.json` —
+missing ones are skipped, so you don't need all five.
 
-Eigene Notizen als zusaetzliche Quelle: `.md`-Dateien nach `exports/manual/` legen, sie
-werden mit eingelesen.
+Own notes as an extra source: put `.md` files in `exports/manual/` and they get read in
+with the rest.
 
-### 4. Pipeline ausfuehren
+### 4. Run it
 
 ```bash
-python -m scripts.pipeline                 # nutzt config.json
-python -m scripts.pipeline config.local.json   # eigene Konfiguration
+python -m scripts.pipeline                     # uses config.json
+python -m scripts.pipeline config.local.json   # your own config
 ```
 
-Die Pipeline schreibt `knowledge-base/` **bei jedem Lauf komplett neu** — von Hand dort
-eingefuegte Dateien gehen verloren. Eigene Inhalte gehoeren nach `exports/manual/`.
+Heads up: `knowledge-base/` is **rewritten from scratch** every run. Anything you paste
+in there by hand is gone. Own content goes in `exports/manual/`.
 
-### 5. Prompts in die KIs einspeisen
+### 5. Feed the prompts back in
 
-| Datei | Ziel |
+| File | Goes to |
 |---|---|
 | `prompts/claude_project.md` | claude.ai → Projects → Project Instructions |
 | `prompts/chatgpt_custom_gpt.md` | Custom GPT → Instructions |
@@ -134,12 +134,12 @@ eingefuegte Dateien gehen verloren. Eigene Inhalte gehoeren nach `exports/manual
 | `prompts/mistral_agent.md` | chat.mistral.ai → Agents → Instructions |
 | `prompts/copilot_gpt.md` | copilot.microsoft.com → Copilot GPTs → Instructions |
 
-Die Laengenbegrenzung je Plattform steht in `config.json` unter `max_prompt_chars`; wird
-sie ueberschritten, kuerzt die Pipeline und weist im Log darauf hin.
+Per-platform length limits live in `config.json` under `max_prompt_chars`. Go over, and
+the pipeline truncates and says so in the log.
 
 ---
 
-## Wie die Pipeline arbeitet
+## How the pipeline works
 
 ```text
 exports/  →  extractors.py  →  normalize.py  →  deduplicate.py  →  injectors.py  →  prompts/
@@ -147,89 +147,89 @@ exports/  →  extractors.py  →  normalize.py  →  deduplicate.py  →  injec
                               knowledge-base/
 ```
 
-| Schritt | Datei | Was passiert |
+| Step | File | What happens |
 |---|---|---|
-| Einlesen | `scripts/extractors.py` | Pro Plattform ein Parser. Gemini = HTML (Takeout), der Rest = JSON. Fehlende Dateien werden uebersprungen. |
-| Normalisieren | `scripts/normalize.py` | Kategorisiert per Stichwortliste aus `config.json`, vergibt UUIDs, schreibt `.md` mit YAML-Frontmatter nach `knowledge-base/<kategorie>/`. |
-| Entdoppeln | `scripts/deduplicate.py` | Entfernt Doppeleintraege. Abschaltbar via `"deduplicate": false`. |
-| Prompts bauen | `scripts/injectors.py` | Setzt je Plattform einen passenden Rahmen um die Wissensbasis und kuerzt auf das Limit. |
+| Read | `scripts/extractors.py` | One parser per platform. Gemini is HTML (Takeout), the rest is JSON. Missing files get skipped. |
+| Normalise | `scripts/normalize.py` | Categorises by keyword list from `config.json`, assigns UUIDs, writes `.md` with YAML frontmatter into `knowledge-base/<category>/`. |
+| Dedupe | `scripts/deduplicate.py` | Drops duplicates. Turn off with `"deduplicate": false`. |
+| Build prompts | `scripts/injectors.py` | Wraps the knowledge base in a per-platform framing and trims to the limit. |
 
-Kategorien und ihre Stichwoerter aenderst du in `config.json` → `categories`. Die
-Zuordnung ist reines Keyword-Matching, kein Modellaufruf — schnell, aber nur so gut wie
-deine Stichwortliste.
+Categories and their keywords live in `config.json` → `categories`. It's plain keyword
+matching, no model call — fast, and only ever as good as your keyword list. Mine is
+mediocre and I keep meaning to fix it.
 
 ---
 
-## Struktur
+## Layout
 
 ```text
 ai-knowledge-ecosystem/
-├── memory/                  # Handgepflegte Module (hier: Blanko-Vorlagen)
-│   ├── CLAUDE.md            # Einstiegspunkt, Ziel des Symlinks
+├── memory/                  # hand-written modules (placeholders in here)
+│   ├── CLAUDE.md            # entry point, target of the symlink
 │   ├── CORE_IDENTITY.md
 │   ├── CURRENT_CONTEXT.md
 │   ├── WORK_SKILLS.md
 │   └── AI_COLLABORATION.md
 │
-├── knowledge-base/          # Generierte Wissensdatenbank (leer im Template)
+├── knowledge-base/          # generated knowledge base (empty here)
 │   ├── personal/  projects/  technical/
 │   └── business/  creative/  general/
 │
-├── exports/                 # Rohdaten der KIs — niemals committen
-│   └── manual/              # Eigene .md-Notizen als zusaetzliche Quelle
+├── exports/                 # raw AI exports — never commit these
+│   └── manual/              # own .md notes as an extra source
 │
-├── prompts/                 # Generierte System-Prompts je KI
+├── prompts/                 # generated system prompts, one per AI
 │
 ├── scripts/
-│   ├── pipeline.py          # Einstiegspunkt: python -m scripts.pipeline
+│   ├── pipeline.py          # entry point: python -m scripts.pipeline
 │   ├── extractors.py  normalize.py  deduplicate.py  injectors.py
-│   └── install-all-plugins.sh   # optional: Claude-Code-Plugins in einem Rutsch
+│   └── install-all-plugins.sh   # optional: install Claude Code plugins in one go
 │
-├── claude-sync/             # Settings + Auto-Memory auf weitere Rechner bringen
+├── claude-sync/             # carry settings + auto-memory to another machine
 │   ├── README.md
 │   ├── settings.example.json
 │   └── apply.ps1
 │
-├── setup.sh · setup.ps1     # Legt den ~/.claude/CLAUDE.md-Symlink an
-├── update_memory.sh         # memory/ mit dem Repo abgleichen (pull/push)
+├── setup.sh · setup.ps1     # creates the ~/.claude/CLAUDE.md symlink
+├── update_memory.sh         # sync memory/ with the repo (pull/push)
 ├── config.json · requirements.txt
 └── .github/workflows/sync.yml
 ```
 
 ## GitHub Actions
 
-`.github/workflows/sync.yml` fuehrt die Pipeline taeglich um 03:00 UTC aus und ist
-manuell ausloesbar. Optionales Secret unter *Settings → Secrets*:
+`.github/workflows/sync.yml` runs the pipeline daily at 03:00 UTC and can be triggered by
+hand. Optional secret under *Settings → Secrets*:
 
-- `ANTHROPIC_API_KEY` — nur noetig, wenn du die Deduplizierung auf Modellbasis erweiterst
+- `ANTHROPIC_API_KEY` — only if you extend deduplication to use a model
 
-Im oeffentlichen Template laeuft der Workflow ins Leere, weil es keine `exports/` gibt.
-Sinnvoll wird er erst in der privaten Kopie.
+In this public copy the workflow runs into nothing, because there's no `exports/`. It
+only makes sense in the private copy.
 
-## Mehrere Rechner
+## More than one machine
 
-`claude-sync/` uebertraegt Claude-Code-Einstellungen und Auto-Memory auf weitere Systeme
-(u.a. Windows via `apply.ps1`). Details in `claude-sync/README.md`.
+`claude-sync/` carries Claude Code settings and auto-memory over to other systems
+(including Windows, via `apply.ps1`). Details in `claude-sync/README.md`.
 
-## Voraussetzungen
+## Requirements
 
-- Python 3.10 oder neuer
+- Python 3.10+
 - `pip install -r requirements.txt`
-- Optional: [Claude Code](https://claude.com/claude-code) fuer die Memory-Module
+- Optional: [Claude Code](https://claude.com/claude-code) for the memory modules
 
-## Datenschutz
+## About the data
 
-Dieses Repo ist die entkernte Fassung und enthaelt keine persoenlichen Daten — das ist
-der ganze Grund, warum es zwei Repos sind. Drei Regeln, die ich mir selbst gesetzt habe
-und die beim Nachbauen genauso gelten:
+This repo is the hollowed-out version and holds nothing personal — that's the entire
+reason there are two repos. Three rules I set for myself, and they apply just as much if
+you rebuild this:
 
-1. **Die Arbeitskopie ist privat.** `memory/`, `knowledge-base/` und `prompts/` enthalten
-   nach kurzer Nutzung mehr ueber dich als jedes Social-Media-Profil.
-2. **`exports/` bleibt immer lokal** — Rohverlaeufe enthalten alles, auch das, was du
-   laengst vergessen hast.
-3. **Keys und Passwoerter gehoeren in keine committete Datei.** Git vergisst nichts: ein
-   spaeter geloeschter Key steht weiterhin in der History. Deshalb sind
-   `claude-sync/settings.json` und `claude-sync/auto-memory/` gitignored und es gibt nur
-   eine `settings.example.json` mit Platzhaltern.
+1. **The working copy stays private.** After a few weeks, `memory/`, `knowledge-base/`
+   and `prompts/` say more about you than any social profile does.
+2. **`exports/` never leaves the machine.** Raw chat history contains everything —
+   including the parts you'd forgotten you said.
+3. **Keys and passwords go in no committed file, ever.** Git doesn't forget: a key you
+   delete later is still sitting in the history. That's why `claude-sync/settings.json`
+   and `claude-sync/auto-memory/` are gitignored and all you get is a
+   `settings.example.json` full of placeholders.
 
-Wenn dir doch einmal ein Key durchrutscht: rotieren, nicht nur loeschen.
+And if one slips through anyway: rotate it. Deleting it isn't enough.
