@@ -7,13 +7,22 @@ import json
 import sys
 from pathlib import Path
 
-# Scripts-Ordner in Python-Pfad
-sys.path.insert(0, str(Path(__file__).parent))
+# Ensure package imports work when running the file directly.
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-from extractors import extract_claude, extract_chatgpt, extract_gemini, extract_mistral, extract_copilot, extract_manual
-from normalize import normalize_all, save_to_disk, load_config
-from deduplicate import deduplicate
-from injectors import generate_all_prompts
+from scripts.extractors import (
+    extract_claude,
+    extract_chatgpt,
+    extract_gemini,
+    extract_mistral,
+    extract_copilot,
+    extract_manual,
+)
+from scripts.normalize import normalize_all, save_to_disk, load_config
+from scripts.deduplicate import deduplicate
+from scripts.injectors import generate_all_prompts
 
 
 def run(config_path: str = "config.json"):

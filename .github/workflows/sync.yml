@@ -1,11 +1,11 @@
-name: 🔄 Knowledge Sync
+name: Knowledge Sync
 
 on:
-  # Täglich um 03:00 UTC
+  # Taeglich um 03:00 UTC
   schedule:
     - cron: "0 3 * * *"
 
-  # Manuell ausführbar via GitHub UI
+  # Manuell ausfuehrbar ueber die GitHub-Oberflaeche
   workflow_dispatch:
 
 jobs:
@@ -15,29 +15,30 @@ jobs:
       contents: write
 
     steps:
-      - name: 📥 Repository auschecken
+      - name: Repository auschecken
         uses: actions/checkout@v4
 
-      - name: 🐍 Python einrichten
+      - name: Python einrichten
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
 
-      - name: 📦 Abhängigkeiten installieren
+      - name: Abhaengigkeiten installieren
         run: pip install -r requirements.txt
 
-      - name: 🚀 Pipeline ausführen
+      - name: Pipeline ausfuehren
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python scripts/pipeline.py
-        # knowledge-base/ und prompts/ bleiben lokal (.gitignore)
+        run: python -m scripts.pipeline
 
-      - name: 📤 Code-Änderungen committen (keine persönlichen Daten)
+      # Achtung: in diesem oeffentlichen Template gibt es keine exports/ — der Lauf
+      # erzeugt also nichts. Sinn ergibt der Workflow erst in der privaten Kopie,
+      # in der knowledge-base/ und prompts/ versioniert werden.
+      - name: Code-Aenderungen committen (keine persoenlichen Daten)
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Nur Scripts und Config pushen – niemals knowledge-base/ oder prompts/
           git add scripts/ config.json requirements.txt README.md
-          git diff --staged --quiet || git commit -m "🔄 Pipeline update $(date +'%Y-%m-%d %H:%M UTC')"
+          git diff --staged --quiet || git commit -m "Pipeline update $(date +'%Y-%m-%d %H:%M UTC')"
           git push

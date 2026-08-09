@@ -1,0 +1,19 @@
+{
+  "env": {
+    "BEISPIEL_API_KEY": "hier-deinen-key-eintragen"
+  },
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "WebFetch(*)",
+      "WebSearch(*)"
+    ],
+    "defaultMode": "acceptEdits"
+  },
+  "enableAllProjectMcpServers": true,
+  "language": "Deutsch",
+  "verbose": true,
+  "tui": "fullscreen"
+}

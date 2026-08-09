@@ -1,14 +1,24 @@
-# Rohdaten von AI-Exporten – niemals committen!
-exports/
+# --- Rohdaten der KI-Exporte: niemals committen ---
+# Verzeichnis-Inhalt ignorieren, Ordner selbst aber im Repo behalten.
+# (Wichtig: "exports/" wuerde den Ordner komplett ignorieren, dann greift kein "!"-Muster mehr.)
+exports/*
 !exports/.gitkeep
+!exports/manual/
+exports/manual/*
+!exports/manual/.gitkeep
 
-# Persönliche Wissensdatenbank – bleibt lokal
-knowledge-base/
-!knowledge-base/.gitkeep
+# --- Persoenliche Wissensdatenbank: bleibt in der privaten Kopie ---
+knowledge-base/*/*
+!knowledge-base/*/.gitkeep
 
-# Generierte AI-Prompts (enthalten persönliche Daten)
-prompts/
+# --- Generierte System-Prompts (enthalten persoenliche Daten) ---
+prompts/*
 !prompts/.gitkeep
+
+# --- Claude-Sync: die echte settings.json enthaelt API-Keys und Passwoerter ---
+claude-sync/settings.json
+claude-sync/auto-memory/*
+!claude-sync/auto-memory/.gitkeep
 
 # Python
 __pycache__/
