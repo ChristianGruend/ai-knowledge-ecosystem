@@ -3,16 +3,6 @@
 My attempt at building a second brain that all my AIs share — Claude, ChatGPT, Gemini,
 Mistral, Copilot.
 
-> **What this is, and what it isn't.**
-> Not a product. Not a framework. Not a finished tool. This is my own setup with the
-> personal parts stripped out — a thing I built for myself and put here in case someone
-> wants to steal an idea from it. It grows on the side, it changes whenever I find
-> something better, and it's exactly as finished as I need it to be.
->
-> No support, no guarantees, no roadmap. If you rebuild it: read the code before you run
-> it. It's shaped around my day, not yours. Issues are welcome, but I can't promise I'll
-> get to them.
-
 ## The problem I had
 
 Every AI starts from zero. New chat, same story: who I am, what I work on, how I want to
@@ -51,6 +41,16 @@ ready-made system prompts. Those go into each platform's instructions field.
 Still unsolved: the pipeline rewrites `knowledge-base/` from scratch on every run. So
 there's no history, and no way to fix a single entry by hand without moving it into
 `exports/manual/` first.
+
+> **What this is, and what it isn't.**
+> Not a product. Not a framework. Not a finished tool. This is my own setup with the
+> personal parts stripped out — a thing I built for myself and put here in case someone
+> wants to steal an idea from it. It grows on the side, it changes whenever I find
+> something better, and it's exactly as finished as I need it to be.
+>
+> No support, no guarantees, no roadmap. If you rebuild it: read the code before you run
+> it. It's shaped around my day, not yours. Issues are welcome, but I can't promise I'll
+> get to them.
 
 ---
 
