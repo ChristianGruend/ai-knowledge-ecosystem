@@ -223,8 +223,8 @@ ai-knowledge-ecosystem/
 ## GitHub Actions
 
 `.github/workflows/sync.yml` runs the pipeline daily at 03:00 UTC and can be triggered by
-hand. It needs no secrets — deduplication doesn't call a model anymore. The workflow
-still passes `ANTHROPIC_API_KEY` through if you set one, but nothing reads it.
+hand. It needs no secrets — deduplication doesn't call a model anymore. If you set an
+`ANTHROPIC_API_KEY` secret back when it did, you can delete it.
 
 In this public copy the workflow runs into nothing, because there's no `exports/`. It
 only makes sense in the private copy.
