@@ -34,13 +34,18 @@ ready-made system prompts. Those go into each platform's instructions field.
 |---|---|
 | Memory modules + symlink | runs every day, easily the most useful piece |
 | Pipeline (exports → prompts) | works, but the categorising is dumb keyword matching |
-| Deduplication | roughly fine, no model behind it |
+| Deduplication | exact matches only, no model behind it |
+| Import history | append-only — nothing gets deleted or overwritten anymore |
+| Tests | 15 unit tests, `python -m unittest discover -s tests` |
 | GitHub Actions workflow | set up, rarely needed in practice |
 | `claude-sync/` | grew out of "I need this on the other machine too" |
 
-Still unsolved: the pipeline rewrites `knowledge-base/` from scratch on every run. So
-there's no history, and no way to fix a single entry by hand without moving it into
-`exports/manual/` first.
+Fixed since the first version: the pipeline used to rewrite `knowledge-base/` from
+scratch on every run. Now imports only ever get added, and hand edits survive.
+
+Still unsolved: contradictions. If an old chat says one thing and a newer one says the
+opposite, both land in the knowledge base. Nothing resolves that automatically — I
+clean those up by hand.
 
 > **What this is, and what it isn't.**
 > Not a product. Not a framework. Not a finished tool. This is my own setup with the
@@ -121,8 +126,14 @@ python -m scripts.pipeline                     # uses config.json
 python -m scripts.pipeline config.local.json   # your own config
 ```
 
-Heads up: `knowledge-base/` is **rewritten from scratch** every run. Anything you paste
-in there by hand is gone. Own content goes in `exports/manual/`.
+Run it as often as you like. Imports land in `knowledge-base/_imports/`, one file per
+fact, named after the SHA-256 of its text — so the same fact never lands twice, and a
+partial export can't wipe anything you imported before. Files that didn't change
+don't get touched, so a re-run with nothing new produces an empty `git diff`.
+
+Your own notes can go straight into `knowledge-base/` (any subfolder) — they're kept
+and end up in the prompts. Don't edit files in `_imports/`, though: that folder is an
+archive. To correct a fact, delete the wrong file and add the right one.
 
 ### 5. Feed the prompts back in
 
@@ -135,7 +146,15 @@ in there by hand is gone. Own content goes in `exports/manual/`.
 | `prompts/copilot_gpt.md` | copilot.microsoft.com → Copilot GPTs → Instructions |
 
 Per-platform length limits live in `config.json` under `max_prompt_chars`. Go over, and
-the pipeline truncates and says so in the log.
+the pipeline drops whole entries (never cuts one in half) and leaves a note at the end
+of the prompt that something was left out.
+
+What goes in first is set by `memory_files` in `config.json` — an explicit, ordered
+list. By default that's `CORE_IDENTITY`, `WORK_SKILLS`, `CURRENT_CONTEXT`, then the
+knowledge base. Anything else from `memory/` only gets in if you add it to that list
+yourself. That's on purpose: I don't want a deep personal profile to slip into a
+ChatGPT prompt just because it sits in the same folder. If a file on the list is
+missing, the run stops instead of quietly building a thinner prompt.
 
 ---
 
@@ -150,9 +169,10 @@ exports/  →  extractors.py  →  normalize.py  →  deduplicate.py  →  injec
 | Step | File | What happens |
 |---|---|---|
 | Read | `scripts/extractors.py` | One parser per platform. Gemini is HTML (Takeout), the rest is JSON. Missing files get skipped. |
-| Normalise | `scripts/normalize.py` | Categorises by keyword list from `config.json`, assigns UUIDs, writes `.md` with YAML frontmatter into `knowledge-base/<category>/`. |
-| Dedupe | `scripts/deduplicate.py` | Drops duplicates. Turn off with `"deduplicate": false`. |
-| Build prompts | `scripts/injectors.py` | Wraps the knowledge base in a per-platform framing and trims to the limit. |
+| Normalise | `scripts/normalize.py` | Categorises by keyword list from `config.json`, drops entries matching `exclude_keywords`, gives each one a SHA-256 ID and writes it as `.md` with YAML frontmatter into `knowledge-base/_imports/`. Existing files are skipped. |
+| Dedupe | `scripts/deduplicate.py` | Drops exact duplicates only — case and inner whitespace count, so code and paths stay intact. Sources of identical entries get merged. No data goes to any model API. Turn off with `"deduplicate": false`. |
+| Build prompts | `scripts/injectors.py` | Puts `memory_files` first, then everything under `knowledge-base/`, and fits whole entries into each platform's limit. No sources at all → existing prompts stay untouched. |
+| Write | `scripts/storage.py` | Atomic writes, and only when the content actually changed. |
 
 Categories and their keywords live in `config.json` → `categories`. It's plain keyword
 matching, no model call — fast, and only ever as good as your keyword list. Mine is
@@ -171,7 +191,8 @@ ai-knowledge-ecosystem/
 │   ├── WORK_SKILLS.md
 │   └── AI_COLLABORATION.md
 │
-├── knowledge-base/          # generated knowledge base (empty here)
+├── knowledge-base/          # knowledge base (empty here)
+│   ├── _imports/            # append-only import archive, one file per fact
 │   ├── personal/  projects/  technical/
 │   └── business/  creative/  general/
 │
@@ -183,7 +204,10 @@ ai-knowledge-ecosystem/
 ├── scripts/
 │   ├── pipeline.py          # entry point: python -m scripts.pipeline
 │   ├── extractors.py  normalize.py  deduplicate.py  injectors.py
+│   ├── storage.py           # atomic write-if-changed
 │   └── install-all-plugins.sh   # optional: install Claude Code plugins in one go
+│
+├── tests/                   # python -m unittest discover -s tests
 │
 ├── claude-sync/             # carry settings + auto-memory to another machine
 │   ├── README.md
@@ -191,7 +215,7 @@ ai-knowledge-ecosystem/
 │   └── apply.ps1
 │
 ├── setup.sh · setup.ps1     # creates the ~/.claude/CLAUDE.md symlink
-├── update_memory.sh         # sync memory/ with the repo (pull/push)
+├── update_memory.sh         # sync memory/ with the repo (pull, or --push [dir])
 ├── config.json · requirements.txt
 └── .github/workflows/sync.yml
 ```
@@ -199,9 +223,8 @@ ai-knowledge-ecosystem/
 ## GitHub Actions
 
 `.github/workflows/sync.yml` runs the pipeline daily at 03:00 UTC and can be triggered by
-hand. Optional secret under *Settings → Secrets*:
-
-- `ANTHROPIC_API_KEY` — only if you extend deduplication to use a model
+hand. It needs no secrets — deduplication doesn't call a model anymore. The workflow
+still passes `ANTHROPIC_API_KEY` through if you set one, but nothing reads it.
 
 In this public copy the workflow runs into nothing, because there's no `exports/`. It
 only makes sense in the private copy.
