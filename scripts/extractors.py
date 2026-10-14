@@ -5,7 +5,6 @@ Zieht Rohdaten aus den Export-Dateien der verschiedenen AI-Systeme.
 
 import json
 from pathlib import Path
-from bs4 import BeautifulSoup
 
 
 def extract_claude(export_path: str) -> list[dict]:
@@ -14,7 +13,7 @@ def extract_claude(export_path: str) -> list[dict]:
     Export: claude.ai → Einstellungen → Daten exportieren
     """
     path = Path(export_path)
-    if not path.exists():
+    if not path.is_file():
         print(f"  ⚠️  Claude-Export nicht gefunden: {export_path}")
         return []
 
@@ -39,7 +38,7 @@ def extract_claude(export_path: str) -> list[dict]:
                 items.append({
                     "source": "claude",
                     "type": "conversation_highlight",
-                    "content": msg["content"][:500].strip(),
+                    "content": msg["content"].strip(),
                     "created": convo.get("created_at", ""),
                 })
 
@@ -53,7 +52,7 @@ def extract_chatgpt(export_path: str) -> list[dict]:
     Export: chatgpt.com → Einstellungen → Daten exportieren → memories.json
     """
     path = Path(export_path)
-    if not path.exists():
+    if not path.is_file():
         print(f"  ⚠️  ChatGPT-Export nicht gefunden: {export_path}")
         return []
 
@@ -84,9 +83,11 @@ def extract_gemini(export_path: str) -> list[dict]:
     Export: takeout.google.com → Gemini Apps auswählen
     """
     path = Path(export_path)
-    if not path.exists():
+    if not path.is_file():
         print(f"  ⚠️  Gemini-Export nicht gefunden: {export_path}")
         return []
+
+    from bs4 import BeautifulSoup
 
     with open(path, encoding="utf-8") as f:
         soup = BeautifulSoup(f, "html.parser")
@@ -98,7 +99,7 @@ def extract_gemini(export_path: str) -> list[dict]:
             items.append({
                 "source": "gemini",
                 "type": "conversation_highlight",
-                "content": text[:500].strip(),
+                "content": text.strip(),
                 "created": "",
             })
 
@@ -112,7 +113,7 @@ def extract_mistral(export_path: str) -> list[dict]:
     Export: chat.mistral.ai > Einstellungen > Daten exportieren
     """
     path = Path(export_path)
-    if not path.exists():
+    if not path.is_file():
         print(f"  ⚠️  Mistral-Export nicht gefunden: {export_path}")
         return []
 
@@ -142,7 +143,7 @@ def extract_copilot(export_path: str) -> list[dict]:
     Export: account.microsoft.com > Datenschutz > Aktivitaetsverlauf herunterladen
     """
     path = Path(export_path)
-    if not path.exists():
+    if not path.is_file():
         print(f"  ⚠️  Copilot-Export nicht gefunden: {export_path}")
         return []
 
@@ -172,7 +173,7 @@ def extract_manual(manual_dir: str = "exports/manual") -> list[dict]:
     Nützlich für eigene Notizen, Dokumente, etc.
     """
     path = Path(manual_dir)
-    if not path.exists():
+    if not path.is_file():
         return []
 
     items = []
