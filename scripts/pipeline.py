@@ -31,7 +31,19 @@ def run(config_path: str = "config.json"):
 
     # Config laden
     config = load_config(config_path)
-    exports = config.get("exports", {})
+    # Relative paths belong to the configuration file, not the caller's cwd.
+    config_root = Path(config_path).resolve().parent
+    def resolve(value):
+        path = Path(value)
+        return str(path if path.is_absolute() else config_root / path)
+
+    exports = {name: resolve(path) for name, path in config.get("exports", {}).items() if path}
+    config["output_dir"] = resolve(config.get("output_dir", "knowledge-base"))
+    config["prompts_dir"] = resolve(config.get("prompts_dir", "prompts"))
+    config["memory_files"] = [resolve(path) for path in config.get("memory_files", [])]
+    for path in config["memory_files"]:
+        if not Path(path).is_file():
+            raise FileNotFoundError(f"Konfigurierte Memory-Datei fehlt: {path}")
 
     # ── SCHRITT 1: Extraktion ──────────────────────
     print("\n📥 Schritt 1: Extraktion")
@@ -41,11 +53,11 @@ def run(config_path: str = "config.json"):
     raw += extract_gemini(exports.get("gemini", ""))
     raw += extract_mistral(exports.get("mistral", ""))
     raw += extract_copilot(exports.get("copilot", ""))
-    raw += extract_manual()
+    raw += extract_manual(resolve(config.get("manual_dir", "exports/manual")))
 
     if not raw:
-        print("\n⚠️  Keine Daten gefunden. Bitte Exports in 'exports/' ablegen.")
-        print("   Siehe README.md für Anleitung.")
+        print("\nKeine Exports gefunden; nutze vorhandenes Wissen und konfigurierte Memories.")
+        generate_all_prompts(config["output_dir"], config["prompts_dir"], config)
         return
 
     print(f"   Gesamt: {len(raw)} Rohdaten")
