@@ -173,7 +173,7 @@ def extract_manual(manual_dir: str = "exports/manual") -> list[dict]:
     Nützlich für eigene Notizen, Dokumente, etc.
     """
     path = Path(manual_dir)
-    if not path.is_file():
+    if not path.is_dir():
         return []
 
     items = []

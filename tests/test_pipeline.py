@@ -9,9 +9,17 @@ from scripts.deduplicate import deduplicate
 from scripts.injectors import _save_prompt, generate_all_prompts
 from scripts.pipeline import run
 from scripts.storage import write_if_changed
+from scripts.extractors import extract_manual
 
 
 class RegressionTests(unittest.TestCase):
+    def test_manual_notes_are_read_from_directory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            Path(tmp, 'notiz.md').write_text('Manuell erfasster Fakt.', encoding='utf-8')
+            Path(tmp, 'leer.md').write_text('   ', encoding='utf-8')
+            items = extract_manual(tmp)
+        self.assertEqual([i['content'] for i in items], ['Manuell erfasster Fakt.'])
+
     def test_ids_and_serialization_are_stable(self):
         raw = [{'source': 'manual', 'content': 'Ein dauerhaft gespeicherter Fakt.'}]
         self.assertEqual(normalize_all(raw, {}), normalize_all(raw, {}))

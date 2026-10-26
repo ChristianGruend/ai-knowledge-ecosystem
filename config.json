@@ -22,5 +22,10 @@
     "technical": ["code", "api", "python", "software", "dev", "git", "server"],
     "business":  ["projekt", "kunde", "firma", "business", "auftrag", "meeting"],
     "creative":  ["design", "art", "musik", "schreiben", "video", "foto"]
-  }
+  },
+  "memory_files": [
+    "memory/CORE_IDENTITY.md",
+    "memory/WORK_SKILLS.md",
+    "memory/CURRENT_CONTEXT.md"
+  ]
 }

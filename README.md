@@ -205,9 +205,12 @@ ai-knowledge-ecosystem/
 │   ├── pipeline.py          # entry point: python -m scripts.pipeline
 │   ├── extractors.py  normalize.py  deduplicate.py  injectors.py
 │   ├── storage.py           # atomic write-if-changed
+│   ├── ai-knowledge-sync.sh # pull, mirror auto-memories, commit + push (see below)
 │   └── install-all-plugins.sh   # optional: install Claude Code plugins in one go
 │
 ├── tests/                   # python -m unittest discover -s tests
+│
+├── systemd/                 # memory-sync.service + .timer for ai-knowledge-sync.sh
 │
 ├── claude-sync/             # carry settings + auto-memory to another machine
 │   ├── README.md
@@ -217,7 +220,7 @@ ai-knowledge-ecosystem/
 ├── setup.sh · setup.ps1     # creates the ~/.claude/CLAUDE.md symlink
 ├── update_memory.sh         # sync memory/ with the repo (pull, or --push [dir])
 ├── config.json · requirements.txt
-└── .github/workflows/sync.yml
+└── .github/workflows/       # sync.yml (daily pipeline) · tests.yml (every push/PR)
 ```
 
 ## GitHub Actions
@@ -233,6 +236,20 @@ only makes sense in the private copy.
 
 `claude-sync/` carries Claude Code settings and auto-memory over to other systems
 (including Windows, via `apply.ps1`). Details in `claude-sync/README.md`.
+
+To keep the private copy current without thinking about it, `scripts/ai-knowledge-sync.sh`
+pulls, mirrors every `~/.claude/projects/*/memory/` into `claude-memories/` (and Hermes
+memories into `hermes-memories/`, if present), then commits and pushes. Run it three times
+a day with the user units in `systemd/`:
+
+```bash
+ln -s "$PWD/scripts/ai-knowledge-sync.sh" ~/.local/bin/ai-knowledge-sync.sh
+cp systemd/memory-sync.* ~/.config/systemd/user/
+systemctl --user enable --now memory-sync.timer
+```
+
+The mirrors hold personal data — only ever let the script run in the private copy.
+`No local changes to push.` in `~/.local/share/ai-knowledge-sync.log` means healthy.
 
 ## Requirements
 

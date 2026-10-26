@@ -1,0 +1,10 @@
+[Unit]
+Description=AI Knowledge Data Memory Sync (pull + push)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/ai-knowledge-sync.sh
+StandardOutput=append:%h/.local/share/ai-knowledge-sync.log
+StandardError=append:%h/.local/share/ai-knowledge-sync.log

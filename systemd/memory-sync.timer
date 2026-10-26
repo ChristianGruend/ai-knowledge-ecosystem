@@ -1,0 +1,9 @@
+[Unit]
+Description=AI Knowledge Memory Sync — 3x taeglich (nachts + morgens + abends)
+
+[Timer]
+OnCalendar=*-*-* 03,09,21:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

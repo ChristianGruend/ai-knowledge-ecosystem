@@ -98,5 +98,7 @@ def run(config_path: str = "config.json"):
 
 
 if __name__ == "__main__":
-    config_path = sys.argv[1] if len(sys.argv) > 1 else "config.json"
-    run(config_path)
+    import argparse
+    parser = argparse.ArgumentParser(description="Exporte normalisieren und System-Prompts erzeugen.")
+    parser.add_argument("config", nargs="?", default="config.json", help="Pfad zur Config (Standard: config.json)")
+    run(parser.parse_args().config)
