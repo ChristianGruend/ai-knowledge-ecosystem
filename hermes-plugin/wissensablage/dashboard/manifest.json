@@ -1,0 +1,11 @@
+{
+  "name": "wissensablage",
+  "label": "Memory",
+  "description": "Hermes-Memories aller Profile, Prüfbefunde und Sync mit ai-knowledge-data.",
+  "icon": "Database",
+  "version": "1.0.0",
+  "tab": { "path": "/memory", "position": "after:sessions" },
+  "entry": "dist/index.js",
+  "css": "dist/style.css",
+  "api": "plugin_api.py"
+}

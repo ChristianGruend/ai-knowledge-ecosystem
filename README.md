@@ -36,7 +36,8 @@ ready-made system prompts. Those go into each platform's instructions field.
 | Pipeline (exports → prompts) | works, but the categorising is dumb keyword matching |
 | Deduplication | exact matches only, no model behind it |
 | Import history | append-only — nothing gets deleted or overwritten anymore |
-| Tests | 15 unit tests, `python -m unittest discover -s tests` |
+| Tests | 21 unit tests, `python -m unittest discover -s tests` |
+| Memory sync + lint | runs on every machine: Claude Code + Hermes memories mirrored, checked, pushed |
 | GitHub Actions workflow | set up, rarely needed in practice |
 | `claude-sync/` | grew out of "I need this on the other machine too" |
 
@@ -205,12 +206,16 @@ ai-knowledge-ecosystem/
 │   ├── pipeline.py          # entry point: python -m scripts.pipeline
 │   ├── extractors.py  normalize.py  deduplicate.py  injectors.py
 │   ├── storage.py           # atomic write-if-changed
-│   ├── ai-knowledge-sync.sh # pull, mirror auto-memories, commit + push (see below)
+│   ├── ai-knowledge-sync.sh # pull, mirror auto-memories, check, commit + push (see below)
+│   ├── hermes_memory.py     # Hermes profiles: mirror, share USER.md, lint all memories
+│   ├── install-hermes-sync.sh   # links script, units and the Hermes plugin from this repo
 │   └── install-all-plugins.sh   # optional: install Claude Code plugins in one go
 │
 ├── tests/                   # python -m unittest discover -s tests
 │
-├── systemd/                 # memory-sync.service + .timer for ai-knowledge-sync.sh
+├── systemd/                 # memory-sync timer (3x a day) + path unit (right after a memory write)
+│
+├── hermes-plugin/           # optional: Hermes dashboard tab "Memory" + /memory-sync command
 │
 ├── claude-sync/             # carry settings + auto-memory to another machine
 │   ├── README.md
@@ -237,19 +242,35 @@ only makes sense in the private copy.
 `claude-sync/` carries Claude Code settings and auto-memory over to other systems
 (including Windows, via `apply.ps1`). Details in `claude-sync/README.md`.
 
-To keep the private copy current without thinking about it, `scripts/ai-knowledge-sync.sh`
-pulls, mirrors every `~/.claude/projects/*/memory/` into `claude-memories/` (and Hermes
-memories into `hermes-memories/`, if present), then commits and pushes. Run it three times
-a day with the user units in `systemd/`:
+To keep the private copy current without thinking about it, `scripts/ai-knowledge-sync.sh`:
+
+1. pulls (`--rebase --autostash`, so hand edits in `memory/` survive),
+2. mirrors every non-empty `~/.claude/projects/*/memory/` into `claude-memories/`,
+3. if [Hermes Agent](https://github.com/NousResearch/hermes-agent) is installed: copies the
+   default profile's `USER.md` into every profile that keeps its own `USER.md` (same file lock
+   Hermes uses, the profile's old version is backed up first), then mirrors all profiles into
+   `hermes-memories/default/` and `hermes-memories/profiles/<name>/`,
+4. lints everything (`scripts/hermes_memory.py lint`): Hermes char limits and `§` format,
+   paths that no longer exist, profile drift, `<!-- Stand: … -->` headers that are older
+   than the last commit or too old overall, Claude Code index/frontmatter,
+5. commits and pushes. A failed push (offline) isn't fatal, the commit goes out next run.
+
+One command sets it all up (idempotent; everything is symlinked from this repo):
 
 ```bash
-ln -s "$PWD/scripts/ai-knowledge-sync.sh" ~/.local/bin/ai-knowledge-sync.sh
-cp systemd/memory-sync.* ~/.config/systemd/user/
-systemctl --user enable --now memory-sync.timer
+scripts/install-hermes-sync.sh
 ```
 
+That links the script into `~/.local/bin`, enables `memory-sync.timer` (03/09/21 h) and
+`memory-sync.path` (sync 120 s after Hermes writes a memory or `memory/` changes), and — if
+`~/.hermes` exists — the Hermes plugin: a dashboard tab **Memory** (findings, memories per
+profile with usage, sync status, "sync now") and a `/memory-sync` command for TUI and
+messaging. Try it first with `ai-knowledge-sync.sh --dry-run` (no pull, no writes, no push).
+
+State lives in `~/.local/state/ai-knowledge-sync/{status,lint}.json`, the log in
+`~/.local/share/ai-knowledge-sync.log`.
+
 The mirrors hold personal data — only ever let the script run in the private copy.
-`No local changes to push.` in `~/.local/share/ai-knowledge-sync.log` means healthy.
 
 ## Requirements
 

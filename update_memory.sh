@@ -13,7 +13,7 @@ cd "$REPO_DIR" || exit 1
 
 # --- PULL ---
 echo "Pulling latest memory from GitHub..."
-git pull --quiet origin main
+git pull --quiet --rebase --autostash origin main
 
 if [ $? -ne 0 ]; then
     echo "ERROR: git pull fehlgeschlagen. Konflikte prüfen."

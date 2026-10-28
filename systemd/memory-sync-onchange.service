@@ -1,0 +1,8 @@
+[Unit]
+Description=AI Knowledge Memory Sync nach Memory-Änderung (gebündelt)
+
+[Service]
+Type=oneshot
+# 120 s warten: mehrere Memory-Writes einer Hermes-Session landen in einem Commit
+ExecStart=%h/.local/bin/ai-knowledge-sync.sh --debounce 120
+Nice=10
