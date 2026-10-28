@@ -66,13 +66,33 @@ def _memory_config(home: Path) -> dict:
     cfg_file = home / "config.yaml"
     if not cfg_file.exists():
         return {}
+    text = cfg_file.read_text(encoding="utf-8")
     try:
         import yaml
-        data = yaml.safe_load(cfg_file.read_text(encoding="utf-8")) or {}
-    except Exception:
+    except ImportError:  # ohne PyYAML: flache Schlüssel des memory:-Blocks selbst lesen
+        return _memory_block_fallback(text)
+    try:
+        data = yaml.safe_load(text) or {}
+    except yaml.YAMLError:
         return {}
     mem = data.get("memory") if isinstance(data, dict) else None
     return mem if isinstance(mem, dict) else {}
+
+
+def _memory_block_fallback(text: str) -> dict:
+    block, inside = {}, False
+    for line in text.splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        if not line[0].isspace():
+            inside = line.split("#")[0].strip() == "memory:"
+            continue
+        if inside and (m := re.match(r"\s+(\w+):\s*([^#]*)", line)):
+            value = m[2].strip().strip("'\"")
+            low = value.lower()
+            block[m[1]] = (True if low == "true" else False if low == "false"
+                           else int(value) if value.isdigit() else value)
+    return block
 
 
 def memory_enabled(home: Path) -> bool:
