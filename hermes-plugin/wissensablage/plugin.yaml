@@ -1,0 +1,4 @@
+name: wissensablage
+version: 1.0.0
+description: "Memory-Sync mit deiner privaten ai-knowledge-data-Kopie: Dashboard-Tab „Memory“ und Slash-Befehl /memory-sync (Sync anstoßen, Prüfbefunde zeigen)."
+author: "ChristianGruend + Claude Code"

@@ -1,9 +1,10 @@
 [Unit]
-Description=AI Knowledge Memory Sync — 3x taeglich (nachts + morgens + abends)
+Description=AI Knowledge Memory Sync — 3x täglich (nachts + morgens + abends)
 
 [Timer]
 OnCalendar=*-*-* 03,09,21:00:00
 Persistent=true
+RandomizedDelaySec=2min
 
 [Install]
 WantedBy=timers.target

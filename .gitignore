@@ -38,3 +38,6 @@ Thumbs.db
 # Logs
 *.log
 logs/
+
+# Git-Worktrees von Claude Code
+.claude/worktrees/

@@ -1,10 +1,11 @@
 [Unit]
-Description=AI Knowledge Data Memory Sync (pull + push)
+Description=AI Knowledge Memory Sync (Claude + Hermes -> ai-knowledge-data, prüfen, push)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=oneshot
+# Das Skript schreibt sein eigenes Log nach ~/.local/share/ai-knowledge-sync.log;
+# unerwartete Fehler landen zusätzlich im Journal (journalctl --user -u memory-sync).
 ExecStart=%h/.local/bin/ai-knowledge-sync.sh
-StandardOutput=append:%h/.local/share/ai-knowledge-sync.log
-StandardError=append:%h/.local/share/ai-knowledge-sync.log
+Nice=10

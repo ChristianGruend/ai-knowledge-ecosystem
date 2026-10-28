@@ -1,0 +1,14 @@
+[Unit]
+Description=AI Knowledge Memory Sync bei Änderungen an Hermes-Memories oder memory/
+
+[Path]
+# Hermes schreibt atomar (Temp-Datei + rename) – deshalb das Verzeichnis beobachten.
+# Profil-Verzeichnisse ergänzt install-hermes-sync.sh als Drop-in (maschinenspezifisch).
+PathChanged=%h/.hermes/memories
+PathChanged=%h/Projekte/ai-knowledge-data/memory
+Unit=memory-sync-onchange.service
+TriggerLimitIntervalSec=10min
+TriggerLimitBurst=6
+
+[Install]
+WantedBy=default.target
